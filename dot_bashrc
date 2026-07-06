@@ -30,7 +30,7 @@ if [[ -f ${HOME}/.config/shell/aliases/common_aliases ]]; then
 fi
 
 # Set the shell prompt
-if [[ -f ${HOME}/.config/shell/prompt/bash_prompt.sh
+if [[ -f ${HOME}/.config/shell/prompt/bash_prompt.sh ]]; then
   . ${HOME}/.config/shell/prompt/bash_prompt.sh
 fi
 
