@@ -11,3 +11,7 @@
 # ridden in every subshell.
 
 test -s ~/.alias && . ~/.alias || true
+
+if [[ -f ${HOME}/.config/shell/functions/bash_functions.sh ]]; then
+    source ${HOME}/.config/shell/functions/bash_functions.sh
+fi
