@@ -1,0 +1,93 @@
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" Force 256 colors on the terminal
+set t_Co=256
+
+" Load the color scheme
+"colorscheme elflord
+
+" show line numbers
+set number
+
+" Highlight cursor line underneath the cursor horizontally
+set cursorline
+highlight cursorline cterm=NONE ctermbg=234 ctermfg=NONE
+highlight CursorLineNr cterm=NONE ctermbg=234 ctermfg=NONE " Highlight the line numbers same as the rest of the line
+
+" Highlight the cursor column underneath the cursor vertically
+set cursorcolumn
+highlight CursorColumn cterm=NONE ctermbg=234 ctermfg=NONE
+
+" display "-- INSERT --" when entering insert mode
+set showmode
+
+" incremental search
+set incsearch
+
+" highlight matching search terms
+set hlsearch
+
+" set ic means case-insensitive search; noic means case-sensitive.
+set noic
+
+" allow backspacing over any character in insert mode
+set backspace=indent,eol,start
+
+" do not wrap lines
+set nowrap
+
+" set the mouse to work in the console
+set mouse=a
+
+" keep 50 lines of command line history
+set history=50
+
+" show the cursor position
+set ruler
+
+" do incremental searching
+set incsearch
+
+" save a backup file
+set backup
+
+" the visual bell flashes the background instead of an audible bell.
+set visualbell
+
+" Turn off visual bell
+set novisualbell
+
+" set sensible defaults for different types of text files.
+au FileType c set cindent tw=79
+au FileType sh set ai et sw=4 sts=4 noexpandtab
+au FileType vim set ai et sw=2 sts=2 noexpandtab
+
+" indent new lines to match the current indentation
+set autoindent
+
+" don't replace tabs with spaces
+set noexpandtab
+
+" use tabs at the start of a line, spaces elsewhere
+set smarttab
+
+" show syntax highlighting
+syntax on
+
+" show whitespace at the end of a line
+highlight WhitespaceEOL ctermbg=blue guibg=blue
+match WhitespaceEOL /\s\+$/
+
+" Cursor shapes
+" -------------
+" Reference chart of cursor values
+"   Ps = 0 -> Blinking Block
+"   Ps = 1 -> Blinking Block (default)
+"   Ps = 2 -> Steady Block
+"   Ps = 3 -> Blinking Underline
+"   Ps = 4 -> Steady Underline
+"   Ps = 5 -> Blinking Bar (xterm)
+"   Ps = 6 -> Steady bar (xterm)
+let &t_SI = "\e[3 q"
+let &t_EI = "\e[2 q"
