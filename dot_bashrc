@@ -5,13 +5,6 @@ if [[ -f ${HOME}/.config/shell/environment/common_env ]]; then
   . ${HOME}/.config/shell/environment/common_env 
 fi
 
-# Enable ssh-agent to share SSH_AUTH_SOCK with subshells. Helps with "chezmoi cd" command.
-export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.sock"
-if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-  rm -f "$SSH_AUTH_SOCK"
-  ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
-fi
-
 # Import custom functions into the session
 if [[ -f ${HOME}/.config/shell/functions/bash_functions.sh ]]; then
   source ${HOME}/.config/shell/functions/bash_functions.sh
