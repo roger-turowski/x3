@@ -1,8 +1,8 @@
 # .bashrc
 
 # Import environment variables
-if [[ -f ${HOME}/config/environment/common_env ]]; then
-  . ${HOME}/config/environment/common_env 
+if [[ -f ${HOME}/.config/shell/environment/common_env ]]; then
+  . ${HOME}/.config/shell/environment/common_env 
 fi
 
 # Enable ssh-agent to share SSH_AUTH_SOCK with subshells. Helps with "chezmoi cd" command.
