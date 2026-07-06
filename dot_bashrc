@@ -29,18 +29,10 @@ if [[ -f ${HOME}/.config/shell/aliases/common_aliases ]]; then
   . ${HOME}/.config/shell/aliases/common_aliases 
 fi
 
-# Get status of the last command to use in the shell prompt
-exitstatus()
-{
-if [[ $? == 0 ]]; then
-printf "\033[01;32m""\xE2\x9C\x93"
-else
-printf "\033[01;31m""\xE2\x9C\x98"
-fi
-}
-
 # Set the shell prompt
-PS1='\n$(exitstatus) \[\e[01;32m\]\u\[\e[01;36m\]@\[\e[01;34m\]\h \[\e[01;36m\](\[\e[01;33m\]\w\[\e[01;36m\])\n\[\e[00;37m\]\$ \[\e[00m\]'
+if [[ -f ${HOME}/.config/shell/prompt/bash_prompt.sh
+  . ${HOME}/.config/shell/prompt/bash_prompt.sh
+fi
 
 # If not running interactively, don't do anything
 # or else WinSCP will fail to connect.
