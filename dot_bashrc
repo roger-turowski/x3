@@ -15,3 +15,7 @@ test -s ~/.alias && . ~/.alias || true
 if [[ -f ${HOME}/.config/shell/functions/bash_functions.sh ]]; then
     source ${HOME}/.config/shell/functions/bash_functions.sh
 fi
+
+if [[ -f ${HOME}/.config/shell/aliases/common_aliases ]]; then
+    . ${HOME}/.config/shell/aliases/common_aliases 
+fi
