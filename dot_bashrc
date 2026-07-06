@@ -1,22 +1,15 @@
-# Sample .bashrc for SUSE Linux
-# Copyright (c) SUSE Software Solutions Germany GmbH
+# .bashrc
 
-# There are 3 different types of shells in bash: the login shell, normal shell
-# and interactive shell. Login shells read ~/.profile and interactive shells
-# read ~/.bashrc; in our setup, /etc/profile sources ~/.bashrc - thus all
-# settings made here will also take effect in a login shell.
-#
-# NOTE: It is recommended to make language settings in ~/.profile rather than
-# here, since multilingual X sessions would not work properly if LANG is over-
-# ridden in every subshell.
-
-test -s ~/.alias && . ~/.alias || true
+# Import environment variables
+if [[ -f ${HOME}/config/environment/common_env ]]; then
+  . ${HOME}/config/environment/common_env 
+fi
 
 # Enable ssh-agent to share SSH_AUTH_SOCK with subshells. Helps with "chezmoi cd" command.
 export SSH_AUTH_SOCK="$HOME/.ssh/ssh-agent.sock"
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
-    rm -f "$SSH_AUTH_SOCK"
-    ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
+  rm -f "$SSH_AUTH_SOCK"
+  ssh-agent -a "$SSH_AUTH_SOCK" > /dev/null
 fi
 
 # Import custom functions into the session
