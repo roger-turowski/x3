@@ -1,0 +1,5 @@
+# ~/.config/bat/config
+--style="numbers,changes,header,grid"
+--theme="Catppuccin Mocha"
+--paging="auto"
+--tabs=4
