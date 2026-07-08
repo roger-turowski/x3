@@ -6,7 +6,7 @@ if [[ -f ${HOME}/.config/shell/environment/common_env ]]; then
 fi
 
 # Import "fzf" configuration variables
-if [ -f ${HOME}/.config/fzf/config ]; then
+if [[ -f ${HOME}/.config/fzf/config ]]; then
   . ${HOME}/.config/fzf/config
 fi
 
@@ -42,6 +42,9 @@ fi
 # If not running interactively, don't do anything
 # or else WinSCP will fail to connect.
 [[ $- != *i* ]] && return
+
+# Run zoxide to assist directory traversal
+eval "$(zoxide init bash --cmd cd)"
 
 # Auto-attach tmux "Default" session
 if [[ -z "$TMUX" ]]; then
