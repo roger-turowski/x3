@@ -8,3 +8,12 @@ export HISTSIZE=10000
 # SSH Agent
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
+# Formatting for "less" and man pages
+export LESS_TERMCAP_md=$'\e[01;31m'    # bold
+export LESS_TERMCAP_me=$'\e[0m'         # end bold
+export LESS_TERMCAP_se=$'\e[0m'         # end standout
+export LESS_TERMCAP_so=$'\e[01;33m'     # standout (search highlight)
+export LESS_TERMCAP_ue=$'\e[0m'         # end underline
+export LESS_TERMCAP_us=$'\e[04;36m'     # underline
+export GROFF_NO_SGR=1
+
