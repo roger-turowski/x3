@@ -9,4 +9,5 @@ is_file_exists() {
 
 chezmoi-cd() {
   cd "$(chezmoi source-path "$@")"
-}   
+}
+
