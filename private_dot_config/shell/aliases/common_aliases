@@ -36,4 +36,5 @@ alias speedtest='curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/m
 alias mem5='ps au | sort -nr -k 4 | head -5'
 alias cpu5='ps au | sort -nr -k 3 | head -5'
 alias jctl='journalctl -p 3 -xb'
+alias fastfetch='.local/bin/fastfetch.sh'
 
