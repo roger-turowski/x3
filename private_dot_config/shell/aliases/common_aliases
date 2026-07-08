@@ -2,11 +2,12 @@
 alias cat='bat --paging=never'
 
 # Replace ls with eza
-alias ls='eza'
-alias ll='eza -l'
-alias la='eza -la'
-alias lt='eza --tree'
-alias llt='eza --tree --level=2'
+alias ls='eza --color=always --group-directories-first'
+alias ll='eza -l --color=always --group-directories-first'
+alias la='eza -la --color=always --group-directories-first'
+alias lt='eza -aT --color=always --group-directories-first'
+alias llt='eza -aT --level=2 --color=always --group-directories-first'
+alias l.='eza -a | egrep "^\."'
 
 # Safety aliases
 alias mv='mv -i'
@@ -15,10 +16,12 @@ alias rm='rm -i'
 
 # Colorization aliases
 alias grep='grep --color=always'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 alias less='less -R'
 
 # Readability aliases
-alias df='df -H -squashfs -x tmpfs -x devtmpfs'
+alias df='df -H -x squashfs -x tmpfs -x devtmpfs'
 alias lsmount='mount | column -t'
 
 # Git aliases
@@ -30,6 +33,7 @@ alias gs='git status'
 # Tools
 alias extip='curl icanhazip.com'
 alias speedtest='curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -'
-alias mem5='ps auxf | sort -nr -k 4 | head -5'
-alias cpu5='ps auxf | sort -nr -k 3 | head -5'
+alias mem5='ps au | sort -nr -k 4 | head -5'
+alias cpu5='ps au | sort -nr -k 3 | head -5'
+alias jctl='journalctl -p 3 -xb'
 
