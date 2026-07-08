@@ -1,20 +1,20 @@
 # Common Environment Variables
 
 # History
-export HISTCONTROL=ignoreboth
-export HISTFILESIZE=20000
-export HISTSIZE=10000
+export HISTCONTROL=ignoreboth           # Commands with leading space, or matching recent history, aren't saved
+export HISTFILESIZE=20000               # Number of entries to save in history on disk
+export HISTSIZE=10000                   # Number of entries to save in history in memory
 
 # SSH Agent
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"  # Enabled ssh-agent to handle requests from subshells
 
 # Formatting for "less" and man pages
-export LESS_TERMCAP_md=$'\e[01;31m'    # bold
+export LESS_TERMCAP_md=$'\e[01;31m'     # bold
 export LESS_TERMCAP_me=$'\e[0m'         # end bold
 export LESS_TERMCAP_se=$'\e[0m'         # end standout
 export LESS_TERMCAP_so=$'\e[01;33m'     # standout (search highlight)
 export LESS_TERMCAP_ue=$'\e[0m'         # end underline
 export LESS_TERMCAP_us=$'\e[04;36m'     # underline
-export GROFF_NO_SGR=1
-export MAN_POSIXLY_CORRECT=1
+export GROFF_NO_SGR=1                   # Enables man page colorization to work properly
+export MAN_POSIXLY_CORRECT=1            # Avoids the question asking which man page to load
 
