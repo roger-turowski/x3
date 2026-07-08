@@ -44,9 +44,9 @@ export FZF_DEFAULT_OPTS="
 --margin=1
 --padding=1
 --border
---prompt='❯ '
---pointer='▶'
---marker='✓'
+--prompt='$ '
+--pointer='>'
+--marker='*'
 --color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64
 --color=fg+:#c0caf5,bg+:#292e42,hl+:#ff9e64
 --color=info:#7aa2f7,prompt:#7dcfff,spinner:#9ece6a

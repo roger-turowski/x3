@@ -77,4 +77,10 @@ labssh() {
     ssh "10.0.0.$1"
 }
 
+# In your shell rc or a script
+tmux-new-ssh() {
+    local host=$(awk '/^Host / {print $2}' ~/.ssh/config | fzf --prompt="SSH> ")
+    [[ -n "$host" ]] && tmux new-window -n "$host" "ssh $host"
+}
+
 
