@@ -1,0 +1,82 @@
+#!/bin/env bash
+set -e
+
+OS="{{ .chezmoi.osRelease.id }}"
+
+echo "[chezmoi] OS detected: $OS"
+
+# ─── Resolve package list for this distro ──────────────────
+{{- $pkgs := index .packages .chezmoi.osRelease.id }}
+{{- if not $pkgs }}
+echo "[chezmoi] No package list for $OS. Skipping."
+exit 0
+{{- end }}
+
+# ─── Install via system package manager ────────────────────
+case "$OS" in
+    arch)
+        echo "[chezmoi] Installing via pacman..."
+        sudo pacman -S --needed --noconfirm {{ join " " $pkgs }}
+        ;;
+    opensuse-tumbleweed|opensuse-leap|opensuse)
+        echo "[chezmoi] Installing via zypper..."
+        sudo zypper --non-interactive install {{ join " " $pkgs }}
+        ;;
+    debian|ubuntu)
+        echo "[chezmoi] Installing via apt..."
+        sudo apt-get update
+        sudo apt-get install -y {{ join " " $pkgs }}
+        ;;
+    fedora)
+        echo "[chezmoi] Installing via dnf..."
+        sudo dnf install -y {{ join " " $pkgs }}
+        ;;
+    *)
+        echo "[chezmoi] Unsupported: $OS"
+        exit 1
+        ;;
+esac
+
+# ─── AUR packages (Arch only) ──────────────────────────────
+{{- if eq .chezmoi.osRelease.id "arch" }}
+{{- if .aur.arch }}
+echo "[chezmoi] Installing AUR packages..."
+if command -v paru >/dev/null 2>&1; then
+    paru -S --needed --noconfirm {{ join " " .aur.arch }}
+elif command -v yay >/dev/null 2>&1; then
+    yay -S --needed --noconfirm {{ join " " .aur.arch }}
+else
+    echo "[chezmoi] No AUR helper found (paru/yay). Skipping: {{ join " " .aur.arch }}"
+fi
+{{- end }}
+{{- end }}
+
+# ─── Cargo installs (where distro lacks the package) ───────
+{{- $cargo := index .cargo .chezmoi.osRelease.id }}
+{{- if $cargo }}
+echo "[chezmoi] Installing Rust crates via cargo..."
+if ! command -v cargo >/dev/null 2>&1; then
+    echo "[chezmoi] cargo not found. Installing rustup..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+    . "$HOME/.cargo/env"
+fi
+cargo install {{ join " " $cargo }}
+{{- end }}
+
+# ─── Binary symlinks (rename fixes) ────────────────────────
+{{- $links := index .symlinks .chezmoi.osRelease.id }}
+{{- if $links }}
+echo "[chezmoi] Creating binary symlinks..."
+{{- range $links }}
+{{- $parts := splitList ":" . }}
+SRC="{{ index $parts 0 }}"
+DST="{{ index $parts 1 }}"
+SRCBIN="$(command -v "$SRC" 2>/dev/null)"
+if [ -n "$SRCBIN" ] && [ ! -e "$(dirname "$SRCBIN")/$DST" ]; then
+    ln -s "$SRCBIN" "$(dirname "$SRCBIN")/$DST"
+    echo "[chezmoi] Linked $SRC -> $DST"
+fi
+{{- end }}
+{{- end }}
+
+echo "[chezmoi] Package installation complete."
