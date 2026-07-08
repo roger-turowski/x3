@@ -1,0 +1,15 @@
+# ~/.config/fzf/config
+
+# Set the default command to use when fzf is invoked without arguments
+export FZF_DEFAULT_COMMAND='fd --type file'
+
+# Set options for the file finder
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --prompt='❯ '"
+
+# Set options for the file finder when invoked via Ctrl-T
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always {}'"
+
+# Set options for the process finder (Ctrl-P)
+export FZF_CTRL_P_OPTS="--preview 'bat -n --color=always {}'"
+

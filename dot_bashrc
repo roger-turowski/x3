@@ -2,7 +2,12 @@
 
 # Import environment variables
 if [[ -f ${HOME}/.config/shell/environment/common_env ]]; then
-  . ${HOME}/.config/shell/environment/common_env 
+  . ${HOME}/.config/shell/environment/common_env
+fi
+
+# Import "fzf" configuration variables
+if [ -f ${HOME}/.config/fzf/config ]; then
+  . ${HOME}/.config/fzf/config
 fi
 
 # Import custom functions into the session
@@ -16,7 +21,7 @@ fi
 
 # Import aliases into the session
 if [[ -f ${HOME}/.config/shell/aliases/common_aliases ]]; then
-  . ${HOME}/.config/shell/aliases/common_aliases 
+  . ${HOME}/.config/shell/aliases/common_aliases
 fi
 
 # Set the shell prompt
