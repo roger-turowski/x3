@@ -1,0 +1,45 @@
+{{- /* This template generates ~/.config/chezmoi/chezmoi.toml */ -}}
+
+[data]
+
+[data.packages]
+arch = [
+    "eza", "bat", "vim", "fzf", "ripgrep", "fd", "tmux",
+    "htop", "neovim", "zsh", "git", "btop", "zoxide",
+    "fastfetch", "gping", "procs", "dust",
+]
+"opensuse-tumbleweed" = [
+    "eza", "bat", "vim", "fzf", "ripgrep", "fd", "tmux",
+    "htop", "neovim", "zsh", "git", "btop", "zoxide",
+    "gping", "procs", "fastfetch", "dust",
+]
+debian = [
+    "bat", "vim", "fzf", "ripgrep", "fd-find", "tmux",
+    "htop", "neovim", "zsh", "git", "btop", "zoxide",
+    "fastfetch", "gping", "procs",
+    "build-essential", "pkg-config", "libssl-dev",
+]
+ubuntu = [
+    "bat", "vim", "fzf", "ripgrep", "fd-find", "tmux",
+    "htop", "neovim", "zsh", "git", "btop", "zoxide",
+    "fastfetch", "gping", "procs",
+    "build-essential", "pkg-config", "libssl-dev",
+]
+fedora = [
+    "eza", "bat", "vim", "fzf", "ripgrep", "fd-find", "tmux",
+    "htop", "neovim", "zsh", "git", "btop", "zoxide",
+    "fastfetch", "gping", "procs",
+]
+
+[data.aur]
+arch = ["lazygit-bin", "bottom-bin"]
+
+[data.cargo]
+debian  = ["eza", "du-dust"]
+ubuntu  = ["eza", "du-dust"]
+fedora  = ["du-dust"]
+
+[data.symlinks]
+debian = ["fdfind:fd"]
+ubuntu = ["fdfind:fd"]
+
