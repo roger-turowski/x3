@@ -4,9 +4,6 @@ set nocompatible
 " Force 256 colors on the terminal
 set t_Co=256
 
-" Load the color scheme
-"colorscheme elflord
-
 " show line numbers
 set number
 
@@ -78,6 +75,7 @@ syntax on
 " show whitespace at the end of a line
 highlight WhitespaceEOL ctermbg=blue guibg=blue
 match WhitespaceEOL /\s\+$/
+
 
 " Cursor shapes
 " -------------
