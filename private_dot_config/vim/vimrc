@@ -5,7 +5,7 @@ set nocompatible
 " set nobackup
 " set nowritebackup
 
-" Or redirect swap/backup files to a temp directory
+" Redirect swap/backup files to a temp directory
 set backupdir=~/.local/state/vim/backup//
 set directory=~/.local/state/vim/swap//
 
