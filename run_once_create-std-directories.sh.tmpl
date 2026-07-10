@@ -1,0 +1,20 @@
+#!/bin/env bash
+
+set -e
+
+dirs=(
+  "${HOME}/.ssh"
+  "${HOME}/Git"
+  "${HOME}/Media"
+  "${HOME}/Music"
+  "${HOME}/Pictures"
+  "${HOME}/Projects"
+  "${HOME}/Videos"
+  "${HOME}/Work"
+)
+
+for dir in "${dirs[@]}"; do
+  if [[ ! -d "$dir" ]]; then
+    mkdir -p "$dir" || exit 1
+  fi
+done

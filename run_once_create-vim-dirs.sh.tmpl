@@ -1,5 +1,18 @@
 #!/bin/env bash
-mkdir -p ~/.local/state/vim/backup
-mkdir -p ~/.local/state/vim/swap
-mkdir -p ~/.local/state/vim/undo
-mkdir -p ~/.local/state/vim/view
+
+set -e
+exec 2> >(tee -a "$HOME/.local/state/chezmoi/scripts.log")
+
+dirs=(
+    "$HOME/.local/state/vim/backup"
+    "$HOME/.local/state/vim/swap"
+    "$HOME/.local/state/vim/undo"
+    "$HOME/.local/state/vim/view"
+)
+
+for dir in "${dirs[@]}"; do
+    mkdir -p "$dir"
+done
+
+echo "$(date -Iseconds) vim state directories created" >&2
+
