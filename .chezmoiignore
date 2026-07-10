@@ -1,6 +1,15 @@
 # Ignore editor backup files
-*~
+*.~
 *.swp
+*.swo
+*.swn
+*.bak
+*.orig
+*.rej
+*.tmp
+*~
+\#*\#
+.\#*
 
 # Ignore OS-specific files
 {{- if ne .chezmoi.os "darwin" }}
@@ -10,3 +19,17 @@
 # Ignore everything in 'backups' except 'important.txt'
 backups/*
 !backups/important.txt
+
+# Emacs
+.\#*
+
+# Misc caches/history
+*.log
+*.luac
+.netrwhist
+tags
+TAGS
+
+# OS cruft
+.DS_Store
+Thumbs.db
