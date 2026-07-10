@@ -1,0 +1,11 @@
+#!/bin/env bash
+
+set -euo pipefail
+mkdir -p "{$HOME}/Applications"
+
+# pCloud Client
+if [[ ! -f "${HOME}/Applications/pCloud.AppImage" ]]; then
+  curl -L -o "${HOME}/Applications/pCloud.AppImage" "https://partner.pcloud.com/r/17758"
+  chmod +x "${HOME}/Applications/pCloud.AppImage"
+fi
+
