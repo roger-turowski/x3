@@ -83,4 +83,3 @@ tmux-new-ssh() {
     [[ -n "$host" ]] && tmux new-window -n "$host" "ssh $host"
 }
 
-
