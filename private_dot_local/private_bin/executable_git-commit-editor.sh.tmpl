@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="$1"
+
+if [[ ! -f "${MSG_FILE}" ]]; then
+    echo "Error: Commit message file does not exist: ${MSG_FILE}" >&2
+    exit 1
+fi
+
+printf '""' > "${MSG_FILE}"
+
+# Editor resolved at chezmoi apply-time from .chezmoi.toml.tmpl
+EDITOR_BIN="{{ .git_commit_editor }}"
+VIM_VARIANTS=(vim nvim vi)
+
+# Only send cursor-positioning args for vim family editors
+is_vim=false
+for v in "${VIM_VARIANTS[@]}"; do
+    if [[ "${EDITOR_BIN##*/}" == "$v" ]]; then
+        is_vim=true
+        break
+    fi
+done
+
+if $is_vim; then
+    "${EDITOR_BIN}" +"normal! 1|2" "${MSG_FILE}"
+else
+    "${EDITOR_BIN}" "${MSG_FILE}"
+fi

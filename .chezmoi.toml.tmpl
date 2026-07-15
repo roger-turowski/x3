@@ -1,10 +1,23 @@
 {{- /* This template generates ~/.config/chezmoi/chezmoi.toml */ -}}
+{{- $shell := promptStringOnce . "shell" "Default shell" "bash" -}}
+{{- $email := promptStringOnce . "email" "Git email address" -}}
+{{- $name := promptStringOnce . "name" "Git committer name" "Roger Turowski" -}}
+{{- $signingkey := promptStringOnce . "signingkey" "GPG/SSH signing key (leave blank if none)" "" -}}
+{{- $gpgsign := promptBoolOnce . "gpgsign" "Sign commits with GPG/SSH?" false -}}
+{{- $editor := promptStringOnce . "editor" "Default editor" "vim" -}}
 
 [data]
     assetServer = "192.168.2.78"
     assetPort = "8083"
     fzf_preview_glow_style = "tokyo-night"
     fzf_preview_max_size = "384"
+    git_commit_editor = "vim"    # swap to "nvim", "nano", or "pico" anytime
+    shell = {{ $shell | quote }}
+    email = {{ $email | quote }}
+    name = {{ $name | quote }}
+    signingkey = {{ $signingkey | quote }}
+    gpgsign = {{ $gpgsign }}
+    editor = {{ $editor | quote }}
 
 [data.packages]
 arch = [

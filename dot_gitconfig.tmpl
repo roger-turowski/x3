@@ -1,0 +1,37 @@
+# This is Git's per-user configuration file.
+
+# ~/.local/share/chezmoi/dot_gitconfig.tmpl
+
+[user]
+    name  = {{ .name | quote }}
+    email = {{ .email | quote }}
+    {{- if .signingkey }}
+    signingkey = {{ .signingkey | quote }}
+    {{- end }}
+
+[gpg]
+    format = ssh
+
+[commit]
+    gpgsign = {{ .gpgsign }}
+
+[alias]
+    cm = "!GIT_EDITOR=${HOME}/.local/bin/git-commit-editor git commit"
+    co = checkout
+    br = branch
+    st = status
+    lg = log --oneline --graph --decorate --all
+
+[core]
+    editor = {{ .editor | quote }}
+    autocrlf = false
+    pager = delta
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
