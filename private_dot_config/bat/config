@@ -2,4 +2,5 @@
 --style="numbers,changes,header,grid"
 --theme="Catppuccin Mocha"
 --paging="auto"
---tabs=4
+--tabs=2
+--map-syntax "*.tmpl:Go"
