@@ -3,7 +3,7 @@ __build_ps1() {
 
     local status_part
     if (( rc == 0 )); then
-        status_part='\[\e[32m\]✔\[\e[0m\] '
+        status_part='\[\e[32m\]✓\[\e[0m\] '
     else
         status_part="\[\e[31m\]✘(${rc})\[\e[0m\] "
     fi
