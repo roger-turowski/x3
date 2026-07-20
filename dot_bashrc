@@ -29,6 +29,10 @@ if [[ -f ${HOME}/.config/shell/functions/common_functions.sh ]]; then
   source ${HOME}/.config/shell/functions/common_functions.sh
 fi
 
+if [[ -f ${HOME}/.config/shell/functions/vardump.sh ]]; then
+  source ${HOME}/.config/shell/functions/vardump.sh
+fi
+
 # Import aliases into the session
 if [[ -f ${HOME}/.config/shell/aliases/common_aliases ]]; then
   . ${HOME}/.config/shell/aliases/common_aliases
@@ -39,8 +43,8 @@ if [[ -f ${HOME}/.config/shell/prompt/bash_prompt.sh ]]; then
   . ${HOME}/.config/shell/prompt/bash_prompt.sh
 fi
 
-# If not running interactively, don't do anything
-# or else WinSCP will fail to connect.
+# If not running interactively, don't attach
+# tmux or else WinSCP will fail to connect.
 [[ $- != *i* ]] && return
 
 # Run zoxide to assist directory traversal

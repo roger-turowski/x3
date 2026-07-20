@@ -50,8 +50,14 @@ export FZF_DEFAULT_OPTS="
 --padding=1
 --border
 --prompt='❯ '
---pointer='▶'
---marker='✓'
+# The pointer [U+25B6] works for Hack Nerd FOnt, but not 0xProto Nerd Font. 
+#--pointer='▶'
+# The pointer [U+E0B0] works for 0xProto Nerd Font and Hack Nerd Font.
+--pointer=''
+# Check Mark is thin
+#--marker='✓'
+# Check Mark [U+E63F] is thicker
+--marker=''
 --color=dark
 #--color=fg:#c0caf5,bg:#1a1b26,hl:#ff9e64
 #--color=fg+:#c0caf5,bg+:#292e42,hl+:#ff9e64
