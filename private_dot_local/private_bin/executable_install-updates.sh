@@ -17,6 +17,6 @@ case "$ID" in
 	time  pacman -Syu | tee -a "${logfile}"
 	;;
     *)
-	echo "OS not implemented yet!"
+	echo "OS not implemented yet: ${ID}"
 	;;
 esac
