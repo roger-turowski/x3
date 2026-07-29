@@ -1,23 +1,19 @@
 # .bashrc
 
-# Import environment variables
-if [[ -f ${HOME}/.config/shell/environment/common_env ]]; then
-  . ${HOME}/.config/shell/environment/common_env
-fi
+# Source fzf keybindings and completion (distro-agnostic)
+for fzf_path in /usr/share/fzf /usr/share/doc/fzf/examples /opt/homebrew/opt/fzf/shell; do
+    [ -f "$fzf_path/key-bindings.bash" ] && source "$fzf_path/key-bindings.bash"
+    [ -f "$fzf_path/completion.bash" ] && source "$fzf_path/completion.bash"
+done
 
 # Import "fzf" configuration variables
 if [[ -f ${HOME}/.config/fzf/config ]]; then
   . ${HOME}/.config/fzf/config
 fi
 
-# Source fzf key bindings
-if [[ -f /usr/share/fzf/shell/key-bindings.bash ]]; then
- . /usr/share/fzf/shell/key-bindings.bash
-fi
-
-# Source fzf bash completion
-if [[ -f /usr/share/fzf/shell/completion.bash ]]; then
-  . /usr/share/fzf/shell/completion.bash
+# Import environment variables
+if [[ -f ${HOME}/.config/shell/environment/common_env ]]; then
+  . ${HOME}/.config/shell/environment/common_env
 fi
 
 # Import custom functions into the session
