@@ -1,9 +1,21 @@
 # .bashrc
 
+# Add ~/.local/bin to PATH if the directory exists and it's not already in PATH
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*)
+    # Already in PATH, do nothing
+    ;;
+  *)
+    if [ -d "$HOME/.local/bin" ]; then
+      export PATH="$HOME/.local/bin:$PATH"
+    fi
+  ;;
+esac
+
 # Source fzf keybindings and completion (distro-agnostic)
 for fzf_path in /usr/share/fzf /usr/share/doc/fzf/examples /opt/homebrew/opt/fzf/shell; do
-    [ -f "$fzf_path/key-bindings.bash" ] && source "$fzf_path/key-bindings.bash"
-    [ -f "$fzf_path/completion.bash" ] && source "$fzf_path/completion.bash"
+  [ -f "$fzf_path/key-bindings.bash" ] && source "$fzf_path/key-bindings.bash"
+  [ -f "$fzf_path/completion.bash" ] && source "$fzf_path/completion.bash"
 done
 
 # Import "fzf" configuration variables
