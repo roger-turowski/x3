@@ -9,7 +9,7 @@ case "$ID" in
     exec fastfetch --logo-color-1 blue --logo-color-2 bright_blue
     ;;
   arch)
-    exec fastfetch --logo-color-1 cyan
+    exec fastfetch --logo-color-1 blue --logo-color-2 bright_blue 
     ;;
   *)
     exec fastfetch
