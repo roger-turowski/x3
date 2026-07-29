@@ -47,11 +47,12 @@ fi
 eval "$(zoxide init bash --cmd cd)"
 
 # Auto-attach tmux "Default" session
+session_name="Default"
 if [[ -z "$TMUX" ]]; then
-  if tmux has-session -t Default 2>/dev/null; then
-    exec tmux attach-session -t Default
+  if tmux has-session -t "${session_name}" 2>/dev/null; then
+    exec tmux attach-session -t "${session_name}"
   else
-    exec tmux new-session -s Default
+    exec tmux new-session -s "${session_name}"
   fi
 fi
 
