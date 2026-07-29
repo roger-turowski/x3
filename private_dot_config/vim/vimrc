@@ -107,7 +107,20 @@ else
 endif
 
 " Mode indicators in status line
-set statusline=%{mode()}
+"set statusline=%m %t %{mode()}
+set statusline=
+
+" Left side: Filename (truncated), Modified flag, Git branch (if available)
+
+set statusline=%f%m%{exists('*GitBranch')?'GitBranch()':''}
+
+" Separator
+
+set statusline+=%=
+
+" Right side: Filetype, Encoding, Line/Col
+
+set statusline+=\ %Y\ [%n]\ %{&fileformat}\ %l,%c\ %P
 
 " Or color scheme changes per mode (requires termguicolors support)
 au InsertEnter * highlight CursorLine ctermbg=236 gui=bold
