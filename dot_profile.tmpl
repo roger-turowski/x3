@@ -1,0 +1,8 @@
+# Load /etc/profile if not already sourced ($PROFILEREAD guards against double-sourcing or loops)
+test -z "$PROFILEREAD" && . /etc/profile || true
+
+# Write the XDG variables from .chezmoi.toml.tmpl to ~/.profile
+{{ range $key, $val := .xdg -}}
+export {{ $key }}="{{ $val }}"
+{{ end -}}
+
