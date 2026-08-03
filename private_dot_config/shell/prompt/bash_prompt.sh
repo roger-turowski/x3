@@ -28,8 +28,9 @@ __build_ps1() {
         local git_color='\[\e[35m\]'
         if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
             git_color='\[\e[33m\]'
+	    git_dirty="*"
         fi
-        git_part=" ${git_color}[${git_branch}]\[\e[0m\]"
+        git_part=" ${git_color}[${git_branch}${git_dirty}]\[\e[0m\]"
     fi
 
     local r_count t_count
