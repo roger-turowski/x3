@@ -20,6 +20,7 @@ __build_ps1() {
         user_color='\[\e[32m\]'
     fi
 
+    local git_dirty=""
     local git_part=""
     local git_branch
     git_branch=$(git symbolic-ref --short HEAD 2>/dev/null) \
