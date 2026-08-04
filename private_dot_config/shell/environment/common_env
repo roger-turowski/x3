@@ -1,5 +1,8 @@
 # Common Environment Variables
 
+# Default editor
+export EDITOR=vim
+
 # History
 export HISTCONTROL=ignoreboth           # Commands with leading space, or matching recent history, aren't saved
 export HISTFILESIZE=20000               # Number of entries to save in history on disk
