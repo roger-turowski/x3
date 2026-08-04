@@ -1,0 +1,14 @@
+#!/bin/env bash
+
+set -eu
+
+GNUPGHOME="{{ .chezmoi.homeDir }}/.local/share/gnupg"
+
+[ ! -d "$GNUPGHOME" ] && exit 0
+
+chmod 700 "$GNUPGHOME"
+find "$GNUPGHOME" -maxdepth 1 -type f -exec chmod 600 {} \;
+find "$GNUPGHOME" -maxdepth 1 -type d -exec chmod 700 {} \;
+
+gpgconf --kill gpg-agent || true
+

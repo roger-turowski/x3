@@ -33,3 +33,7 @@ TAGS
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# GNUPG Keys
+.local/share/gnupg/private-keys-v1.d/**
+

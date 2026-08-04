@@ -21,3 +21,7 @@ export LESS_TERMCAP_us=$'\e[04;36m'     # underline
 export GROFF_NO_SGR=1                   # Enables man page colorization to work properly
 export MAN_POSIXLY_CORRECT=1            # Avoids the question asking which man page to load
 
+# Security
+#export LESSSECURE=1                            # Prevent less from executing shell commands via - prefix in filenames.
+export GNUPGHOME="${HOME}/.local/share/gnupg"  # Set GNUPG home to XDG compatible directory.
+
