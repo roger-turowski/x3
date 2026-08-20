@@ -43,7 +43,6 @@ esac
 echo "[chezmoi] Installing AUR packages..."
 if command -v paru >/dev/null 2>&1; then
     paru -S --needed --noconfirm {{ join " " .aur.arch }}
-MEi
 elif command -v yay >/dev/null 2>&1; then
     yay -S --needed --noconfirm {{ join " " .aur.arch }}
 else
@@ -74,7 +73,7 @@ SRC="{{ index $parts 0 }}"
 DST="{{ index $parts 1 }}"
 SRCBIN="$(command -v "$SRC" 2>/dev/null)"
 if [ -n "$SRCBIN" ] && [ ! -L "$HOME/.local/bin/$DST" ]; then
-    ln -s "$SRCBIN" "$HOME/.local/bin/$DST""
+    ln -s "$SRCBIN" "$HOME/.local/bin/$DST"
     echo "[chezmoi] Linked $SRC -> $DST"
 fi
 {{- end }}
