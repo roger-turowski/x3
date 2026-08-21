@@ -1,5 +1,5 @@
 # Replace cat with bat
-alias cat='bat --paging=never'
+alias cat='bat'
 
 # Replace ls with eza
 alias ls='eza --color=always --group-directories-first'
@@ -36,6 +36,6 @@ alias speedtest='curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/m
 alias mem5='ps au | sort -nr -k 4 | head -5'
 alias cpu5='ps au | sort -nr -k 3 | head -5'
 alias jctl='journalctl -p 3 -xb'
-alias fastfetch='.local/bin/fastfetch.sh'
+alias fastfetch='$HOME/.local/bin/fastfetch.sh'
 alias du='dust'
 
