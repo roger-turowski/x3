@@ -53,18 +53,17 @@ fedora = [
     "htop", "neovim", "zsh", "git", "btop", "zoxide", "plocate",
     "fastfetch", "gping", "procs", "zellij", "mc", "fuse",
     "fuse-libs", "glow", "age", "kitty",
-
 ]
 
 [data.aur]
 arch = ["lazygit-bin", "bottom-bin"]
 
 [data.cargo]
-debian  = ["eza"]
+#debian  = ["eza"]
 
 [data.symlinks]
-debian = ["fdfind:fd"]
-ubuntu = ["batcat:bat"]
+debian = ["fdfind:fd","batcat:bat"]
+ubuntu = ["fdfind:fd","batcat:bat"]
 
 [data.xdg]
 XDG_STATE_HOME = "${HOME}/.local/state"
