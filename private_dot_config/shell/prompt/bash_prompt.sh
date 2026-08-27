@@ -26,9 +26,9 @@ __build_ps1() {
         || git_branch=$(git rev-parse --short HEAD 2>/dev/null)
     if [[ -n "$git_branch" ]]; then
 	local git_dirty=""
-        local git_color='\[\e[35m\]'
+        local git_color='\[\e[32m\]'
         if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-            git_color='\[\e[33m\]'
+            git_color='\[\e[31m\]'
 	    git_dirty="*"
         fi
         git_part=" ${git_color}[${git_branch}${git_dirty}]\[\e[0m\]"
@@ -59,7 +59,7 @@ __build_ps1() {
         fi
     fi
 
-    PS1="${status_part}${user_color}\u\[\e[0m\]@\[\e[34m\]\h\[\e[0m\]:\[\e[33m\]\w\[\e[0m\]${git_part}${shlvl_part}${jobs_part} ❯ "
+    PS1="${status_part}${user_color}\u\[\e[0m\]@\[\e[34m\]\h\[\e[0m\]:\[\e[33m\]\w\[\e[0m\]${git_part}${shlvl_part}${jobs_part}❯ "
 }
 PROMPT_COMMAND=__build_ps1
 
