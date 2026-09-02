@@ -23,4 +23,4 @@ fi
 find "$TARGET_DIR" -type f -not -path '*/.git/*' \
     | xargs -r du -h 2>/dev/null \
     | sort -rh \
-    | head -n 10
+    | head -n 10 || true
