@@ -14,7 +14,7 @@ case "$ID" in
 	time sudo zypper --non-interactive dup --auto-agree-with-licenses --allow-vendor-change | tee -a "${logfile}"
 	;;
     arch)
-	time  pacman -Syu | tee -a "${logfile}"
+	time sudo pacman -Syu | tee -a "${logfile}"
 	;;
     *)
 	echo "OS not implemented yet: ${ID}"

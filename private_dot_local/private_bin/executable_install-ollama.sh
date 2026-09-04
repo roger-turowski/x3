@@ -14,6 +14,7 @@ sudo tee /etc/systemd/system/ollama.service.d/override.conf << 'EOF'
 [Service]
 Environment="OLLAMA_HOST=0.0.0.0:11434"
 Environment="OLLAMA_MODELS=/data/llm/ollama/.ollama/models"
+Environmeny="OLLAMA_KEEP_ALIVE=30m"
 EOF
 
 sudo mkdir -p /data/llm/{models,huggingface,ollama/.ollama/models/blobs,ollama/.ollama/models/manifests}
