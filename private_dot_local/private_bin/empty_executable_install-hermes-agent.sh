@@ -62,6 +62,11 @@ Environment=HERMES_GID=$HERMES_GID
 Volume=%h/.hermes:/opt/data
 Network=host
 PodmanArgs=--memory=4g --cpus=2
+PublishPort=9119:9119
+Environment=HERMES_DASHBOARD=1
+Environment=HERMES_DASHBOARD_BASIC_AUTH_USERNAME=roger
+Environment=HERMES_DASHBOARD_BASIC_AUTH_PASSWORD='7$Logitech8'
+Environment=HERMES_DASHBOARD_BASIC_AUTH_SECRET=anwrc8tZb9u4R8VDew4Sl7TzyZNdnTcnviYSp1Yg83E=
 
 [Service]
 Restart=always
@@ -73,7 +78,7 @@ EOF
 echo "[6/7] Activating service"
 systemctl --user reset-failed hermes.service 2>/dev/null || true
 systemctl --user daemon-reload
-systemctl --user enable --now hermes.service
+systemctl --user start hermes.service
 
 echo "[7/7] Boot persistence (linger)"
 loginctl enable-linger "$HERMES_USER" 2>/dev/null || \
@@ -83,7 +88,16 @@ KEY="$(grep -oP '(?<=^API_SERVER_KEY=).*' "$ENV_FILE")"
 
 echo
 echo "=== Verification ==="
-sleep 3
+READY=0
+for i in $(seq 1 30); do
+  if curl -s -o /dev/null http://127.0.0.1:8642/health; then READY=1; break; fi
+  sleep 5
+done
+[ "$READY" = 1 ] && echo "gateway: ready" || echo "gateway: NOT READY after 150s"
+
+# 2. Mask the key instead of printing it (replaces the plaintext echo):
+echo "API key set (${KEY:0:8}...)  — full value in ~/.hermes/.env"
+
 systemctl --user is-active hermes.service && echo "service: active" || \
   echo "service: NOT ACTIVE — check: journalctl --user -u hermes -f"
 echo "health:  $(curl -s http://127.0.0.1:8642/health)"
