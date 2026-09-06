@@ -64,15 +64,9 @@ Network=host
 PodmanArgs=--memory=4g --cpus=2
 PublishPort=9119:9119
 Environment=HERMES_DASHBOARD=1
-<<<<<<< HEAD
-Environment=HERMES_DASHBOARD_BASIC_AUTH_USERNAME=roger
-Environment=HERMES_DASHBOARD_BASIC_AUTH_PASSWORD='7$Logitech8'
-Environment=HERMES_DASHBOARD_BASIC_AUTH_SECRET=anwrc8tZb9u4R8VDew4Sl7TzyZNdnTcnviYSp1Yg83E=
-=======
 Environment=HERMES_DASHBOARD_BASIC_AUTH_USERNAME=USER_NAME
 Environment=HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=PASSWORD
 Environment=HERMES_DASHBOARD_BASIC_AUTH_SECRET=SECRET
->>>>>>> 9a1dc0b (Corrected the install-hermes-agent.sh script)
 
 [Service]
 Restart=always
