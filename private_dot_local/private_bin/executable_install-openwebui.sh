@@ -1,5 +1,18 @@
 #! /usr/bin/env bash
 
+# --- Guard: must run as a normal user, not root ---
+
+if [ "$(id -u)" -eq 0 ]; then
+  echo "FAIL: Do not run this script as root or with sudo."
+  echo "      It deploys rootless Podman containers under the invoking user."
+  echo "      The script calls sudo itself where elevated privileges are needed."
+  exit 1
+fi
+
+# Optional: verify sudo is usable non-interactively, since the script
+# invokes it mid-run and failing there is worse than failing here:
+sudo -v || { echo "FAIL: passwordless sudo prompt unavailable"; exit 1; }
+
 mkdir -p "${HOME}/podman/open-webui"
 
 # Podman command line:
