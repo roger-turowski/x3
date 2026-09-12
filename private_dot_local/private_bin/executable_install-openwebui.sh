@@ -37,6 +37,7 @@ TimeoutStartSec=900
 
 [Install]
 WantedBy=default.target
+EOF
 
 #Load and Start
 systemctl --user daemon-reload
