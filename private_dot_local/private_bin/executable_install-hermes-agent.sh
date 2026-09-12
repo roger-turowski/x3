@@ -6,6 +6,31 @@
 #
 set -euo pipefail
 
+# --- Guard: must run as a normal user, not root ---
+if [ "$(id -u)" -eq 0 ]; then
+  echo "FAIL: Do not run this script as root or with sudo."
+  echo "      It deploys rootless Podman containers under the invoking user."
+  echo "      The script calls sudo itself where elevated privileges are needed."
+  exit 1
+fi
+
+# Optional: verify sudo is usable non-interactively, since the script
+# invokes it mid-run and failing there is worse than failing here:
+sudo -v || { echo "FAIL: passwordless sudo prompt unavailable"; exit 1; }
+
+# Optional: catch the "wrong user via su/sudo -i" variant — prompt only confirms
+# the real UID, so also sanity-check HOME agrees with who you think you are:
+if [ "$HOME" = "/root" ] || [ -z "${SUDO_USER:-}" ] && [ "$(id -un)" != "roger" ]; then
+  :
+fi
+
+# (Skip this if you want the script portable across users — the EUID guard
+# above is the essential one.)
+
+# Optional: verify sudo is usable non-interactively, since the script
+# invokes it mid-run and failing there is worse than failing here:
+sudo -v || { echo "FAIL: passwordless sudo prompt unavailable"; exit 1; }
+
 HERMES_USER="${HERMES_USER:-$USER}"
 HERMES_HOME="$HOME/.hermes"
 ENV_FILE="$HERMES_HOME/.env"
@@ -62,11 +87,9 @@ Environment=HERMES_GID=$HERMES_GID
 Volume=%h/.hermes:/opt/data
 Network=host
 PodmanArgs=--memory=4g --cpus=2
-PublishPort=9119:9119
 Environment=HERMES_DASHBOARD=1
 Environment=HERMES_DASHBOARD_BASIC_AUTH_USERNAME=USER_NAME
 Environment=HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=PASSWORD
-Environment=HERMES_DASHBOARD_BASIC_AUTH_SECRET=SECRET
 
 [Service]
 Restart=always
@@ -78,7 +101,7 @@ EOF
 echo "[6/7] Activating service"
 systemctl --user reset-failed hermes.service 2>/dev/null || true
 systemctl --user daemon-reload
-systemctl --user start hermes.service
+systemctl --user restart hermes.service
 
 echo "[7/7] Boot persistence (linger)"
 loginctl enable-linger "$HERMES_USER" 2>/dev/null || \
