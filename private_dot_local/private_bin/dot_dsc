@@ -1,0 +1,3 @@
+install-openwebui.sh	Installs the Open WebUI package into a Podman rootless container using a Quadlet. Run as a user.
+install-hermes-agent.sh	Installs the Hermes Agent and Dashboard into a Podman rootless container using a Quadlet. Run as user.
+
