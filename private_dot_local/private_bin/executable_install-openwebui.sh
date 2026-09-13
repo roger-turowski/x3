@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 
 # --- Guard: must run as a normal user, not root ---
-
 if [ "$(id -u)" -eq 0 ]; then
   echo "FAIL: Do not run this script as root or with sudo."
   echo "      It deploys rootless Podman containers under the invoking user."

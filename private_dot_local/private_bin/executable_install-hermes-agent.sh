@@ -18,19 +18,6 @@ fi
 # invokes it mid-run and failing there is worse than failing here:
 sudo -v || { echo "FAIL: passwordless sudo prompt unavailable"; exit 1; }
 
-# Optional: catch the "wrong user via su/sudo -i" variant — prompt only confirms
-# the real UID, so also sanity-check HOME agrees with who you think you are:
-if [ "$HOME" = "/root" ] || [ -z "${SUDO_USER:-}" ] && [ "$(id -un)" != "roger" ]; then
-  :
-fi
-
-# (Skip this if you want the script portable across users — the EUID guard
-# above is the essential one.)
-
-# Optional: verify sudo is usable non-interactively, since the script
-# invokes it mid-run and failing there is worse than failing here:
-sudo -v || { echo "FAIL: passwordless sudo prompt unavailable"; exit 1; }
-
 HERMES_USER="${HERMES_USER:-$USER}"
 HERMES_HOME="$HOME/.hermes"
 ENV_FILE="$HERMES_HOME/.env"
