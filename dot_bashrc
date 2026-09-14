@@ -58,9 +58,6 @@ fi
 # Run zoxide to assist directory traversal
 eval "$(zoxide init bash --cmd cd)"
 
-# Start ssh-agent to handle ssh keys automatically
-eval "$(ssh-agent -s)"
-
 # Auto-attach tmux "Default" session
 session_name="Default"
 if [[ -z "$TMUX" ]]; then
