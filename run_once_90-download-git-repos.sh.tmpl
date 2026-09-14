@@ -1,0 +1,8 @@
+#!/bin/env bash
+
+set -euo pipefail
+
+# chezmoi.vim Syntax Highlighting plugin
+if [[ ! -d "${HOME}/.config/vim/pack/plugins/opt/chezmoi.vim/" ]]; then
+  git clone https://github.com/alker0/chezmoi.vim ~/.config/vim/pack/plugins/opt/chezmoi.vim
+fi

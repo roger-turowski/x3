@@ -1,6 +1,8 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+packadd chezmoi.vim
+
 " Disable backup files entirely
 " set nobackup
 " set nowritebackup
