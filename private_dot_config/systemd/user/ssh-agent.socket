@@ -1,0 +1,10 @@
+# ~/.config/systemd/user/ssh-agent.socket
+[Unit]
+Description=SSH key agent socket
+
+[Socket]
+ListenStream=%t/ssh-agent.socket
+SocketMode=0600
+
+[Install]
+WantedBy=sockets.target

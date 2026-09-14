@@ -4,7 +4,7 @@
 # result in multiple agents running per user unless complicated checks are
 # performed, which are not always reliable.
 #                                                           RT, 2026-09-14
-# checksums: {{ include "dot_config/systemd/user/ssh-agent.service" | sha256sum }} {{ include "dot_config/systemd/user/ssh-agent.socket" | sha256sum }}
+# checksums: {{ include "private_dot_config/systemd/user/ssh-agent.service" | sha256sum }} {{ include "private_dot_config/systemd/user/ssh-agent.socket" | sha256sum }}
 
 if [ -n "$XDG_RUNTIME_DIR" ] && systemctl --user show-environment >/dev/null 2>&1; then
     systemctl --user daemon-reload

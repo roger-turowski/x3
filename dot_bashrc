@@ -55,6 +55,9 @@ fi
 # tmux or else WinSCP will fail to connect.
 [[ $- != *i* ]] && return
 
+# Initialize fzf
+eval "$(fzf --bash)"
+
 # Run zoxide to assist directory traversal
 eval "$(zoxide init bash --cmd cd)"
 
