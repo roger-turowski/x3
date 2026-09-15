@@ -94,4 +94,3 @@ __build_ps1() {
     PS1="${status_part}${user_color}\u\[\e[0m\]@\[\e[34m\]\h\[\e[0m\]:\[\e[33m\]\w\[\e[0m\]${git_part}${shlvl_part}${jobs_part}❯ "
 }
 PROMPT_COMMAND=__build_ps1
-
