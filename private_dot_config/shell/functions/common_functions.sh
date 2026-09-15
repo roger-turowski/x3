@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 fixssh() {
   chmod 700 ~/.ssh
   chmod 600 ~/.ssh/id_*[!.pub] ~/.ssh/authorized_keys ~/.ssh/config 2>/dev/null
