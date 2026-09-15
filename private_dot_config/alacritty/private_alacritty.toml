@@ -16,25 +16,24 @@ shape = "Block"
 size = 11
 
 [font.normal]
-family = "0xProto Nerd Font"
+family = "0xProto Nerd Font Mono"
 style = "Regular"
 
 [font.bold]
-family = "0xProto Nerd Font"
+family = "0xProto Nerd Font Mono"
 style = "Bold"
 
 [font.italic]
-family = "0xProto Nerd Font"
+family = "0xProto Nerd Font Mono"
 style = "Italic"
 
 [font.bold_italic]
-family = "0xProto Nerd Font"
+family = "0xProto Nerd Font Mono"
 style = "Bold Italic"
 
 [font.offset]
 x = 0
-y = 0
-
+y = -4
 [window]
 opacity = 1.0
 title = "Terminal"
@@ -54,6 +53,6 @@ import = [
   # "~/.config/alacritty/themes/catppucci-latte.toml"
   # "~/.config/alacritty/themes/catppuccin-frappe.toml"
   # "~/.config/alacritty/themes/catppuccin-macchiato.toml"
-  "~/.config/alacritty/themes/catppuccin-mocha.toml"
+  "~/.config/alacritty/themes/catppuccin-mocha-RT.toml"
 ]
 
