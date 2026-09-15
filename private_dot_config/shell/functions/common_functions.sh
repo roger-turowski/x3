@@ -1,3 +1,9 @@
+fixssh() {
+  chmod 700 ~/.ssh
+  chmod 600 ~/.ssh/id_*[!.pub] ~/.ssh/authorized_keys ~/.ssh/config 2>/dev/null
+  chmod 644 ~/.ssh/*.pub ~/.ssh/known_hosts 2>/dev/null
+}   
+
 weather() {
   if [ $# -eq 0 ]; then
     curl wttr.in
