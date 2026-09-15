@@ -8,6 +8,8 @@ alias la='eza -la --color=always --group-directories-first'
 alias lt='eza -aT --color=always --group-directories-first'
 alias llt='eza -aT --level=2 --color=always --group-directories-first'
 alias l.='eza -a | egrep "^\."'
+alias lln='eza -ln --color=always --group-directories-first'
+alias llo='eza -lo --color=always --group-directories-first'
 
 # Safety aliases
 alias mv='mv -i'
