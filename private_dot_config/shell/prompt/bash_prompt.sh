@@ -24,14 +24,37 @@ __build_ps1() {
     local git_branch
     git_branch=$(git symbolic-ref --short HEAD 2>/dev/null) \
         || git_branch=$(git rev-parse --short HEAD 2>/dev/null)
+
+#   if [[ -n "$git_branch" ]]; then
+#	local git_dirty=""
+#        local git_color='\[\e[32m\]'
+#        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+#            git_color='\[\e[31m\]'
+#	    git_dirty="*"
+#        fi
+#        git_part=" ${git_color}[${git_branch}${git_dirty}]\[\e[0m\]"
+#    fi
+
     if [[ -n "$git_branch" ]]; then
-	local git_dirty=""
-        local git_color='\[\e[32m\]'
+        local git_dirty=""
+        local git_ahead=""
+        local git_color='\[\e[32m\]'   # clean, synced
+
         if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
-            git_color='\[\e[31m\]'
-	    git_dirty="*"
+            git_color='\[\e[31m\]'     # dirty working tree
+            git_dirty="*"
         fi
-        git_part=" ${git_color}[${git_branch}${git_dirty}]\[\e[0m\]"
+
+        local ahead_count
+        ahead_count=$(git rev-list --count '@{u}..HEAD' 2>/dev/null)
+        if [[ "$ahead_count" =~ ^[0-9]+$ ]] && (( ahead_count > 0 )); then
+            git_ahead="↑${ahead_count}"
+            if [[ -z "$git_dirty" ]]; then
+                git_color='\[\e[33m\]' # committed, not pushed
+            fi
+        fi
+
+        git_part=" ${git_color}[${git_branch}${git_dirty}${git_ahead}]\[\e[0m\]"
     fi
 
     local r_count t_count
