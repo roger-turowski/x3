@@ -20,10 +20,10 @@ __build_ps1() {
         user_color='\[\e[32m\]'
     fi
 
-    local git_part=""
-    local git_branch
-    git_branch=$(git symbolic-ref --short HEAD 2>/dev/null) \
-        || git_branch=$(git rev-parse --short HEAD 2>/dev/null)
+#    local git_part=""
+#    local git_branch
+#    git_branch=$(git symbolic-ref --short HEAD 2>/dev/null) \
+#        || git_branch=$(git rev-parse --short HEAD 2>/dev/null)
 
 #   if [[ -n "$git_branch" ]]; then
 #	local git_dirty=""
@@ -35,26 +35,72 @@ __build_ps1() {
 #        git_part=" ${git_color}[${git_branch}${git_dirty}]\[\e[0m\]"
 #    fi
 
-    if [[ -n "$git_branch" ]]; then
+#    if [[ -n "$git_branch" ]]; then
+#        local git_dirty=""
+#        local git_ahead=""
+#        local git_color='\[\e[32m\]'   # clean, synced
+#
+#        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+#            git_color='\[\e[31m\]'     # dirty working tree
+#            git_dirty="*"
+#        fi
+#
+#        local ahead_count
+#        ahead_count=$(git rev-list --count '@{u}..HEAD' 2>/dev/null)
+#        if [[ "$ahead_count" =~ ^[0-9]+$ ]] && (( ahead_count > 0 )); then
+#            git_ahead="↑${ahead_count}"
+#            if [[ -z "$git_dirty" ]]; then
+#                git_color='\[\e[33m\]' # committed, not pushed
+#            fi
+#        fi
+#
+#        git_part=" ${git_color}[${git_branch}${git_dirty}${git_ahead}]\[\e[0m\]"
+#    fi
+
+    local git_part=""
+    local git_branch git_status_out
+    git_status_out=$(git status --porcelain=v1 --branch 2>/dev/null)
+    if [[ -n "$git_status_out" ]]; then
+        local header dirty_files=""
+        header=${git_status_out%%$'\n'*}
+        if [[ "$git_status_out" == *$'\n'* ]]; then
+            dirty_files=${git_status_out#*$'\n'}
+        fi
+
         local git_dirty=""
         local git_ahead=""
         local git_color='\[\e[32m\]'   # clean, synced
 
-        if [[ -n "$(git status --porcelain 2>/dev/null)" ]]; then
+        # Branch name from header: "## main...origin/main" or detached: "## HEAD (no branch)"
+        if [[ "$header" == "## HEAD (no branch)"* ]]; then
+            git_branch=$(git rev-parse --short HEAD 2>/dev/null)
+        else
+            git_branch=${header#\#\# }
+            git_branch=${git_branch%%...*}
+        fi
+
+        if [[ -n "$dirty_files" ]]; then
             git_color='\[\e[31m\]'     # dirty working tree
             git_dirty="*"
         fi
 
-        local ahead_count
-        ahead_count=$(git rev-list --count '@{u}..HEAD' 2>/dev/null)
-        if [[ "$ahead_count" =~ ^[0-9]+$ ]] && (( ahead_count > 0 )); then
-            git_ahead="↑${ahead_count}"
+        if [[ "$header" =~ \[ahead\ ([0-9]+) ]]; then
+            git_ahead="↑${BASH_REMATCH[1]}"
             if [[ -z "$git_dirty" ]]; then
                 git_color='\[\e[33m\]' # committed, not pushed
             fi
         fi
 
-        git_part=" ${git_color}[${git_branch}${git_dirty}${git_ahead}]\[\e[0m\]"
+        if [[ "$header" == *'[gone]'* ]]; then
+            git_ahead="✗?"                       # upstream is gone
+            if [[ -z "$git_dirty" ]]; then
+                git_color='\[\e[35m\]'           # magenta: no upstream to push to
+            fi
+        fi
+
+        if [[ -n "$git_branch" ]]; then
+            git_part=" ${git_color}[${git_branch}${git_dirty}${git_ahead}]\[\e[0m\]"
+        fi
     fi
 
     local r_count t_count
