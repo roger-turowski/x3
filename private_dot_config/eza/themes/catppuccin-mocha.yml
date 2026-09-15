@@ -2,7 +2,7 @@ colourful: true
 
 filekinds:
   normal: {foreground: "#BAC2DE"}
-  directory: {foreground: "#89B4FA"}
+  directory: {foreground: "#89B4FA", is_underline: false}
   symlink: {foreground: "#89DCEB"}
   pipe: {foreground: "#7F849C"}
   block_device: {foreground: "#EBA0AC"}
@@ -10,7 +10,7 @@ filekinds:
   socket: {foreground: "#585B70"}
   special: {foreground: "#CBA6F7"}
   executable: {foreground: "#A6E3A1"}
-  mount_point: {foreground: "#74C7EC"}
+  mount_point: {foreground: "#74C7EC", is_underline: false}
 
 perms:
   user_read: {foreground: "#CDD6F4"}
