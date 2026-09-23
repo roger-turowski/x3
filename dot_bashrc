@@ -35,6 +35,11 @@ if [[ -f ${HOME}/.config/shell/aliases/common_aliases ]]; then
   . ${HOME}/.config/shell/aliases/common_aliases
 fi
 
+# Add HuggingFace to the search path
+if [[ -f ${HOME}/.local/bin/hf ]]; then
+  env PATH="/home/roger/.local/bin:$PATH" hf --help
+fi
+
 # Set the shell prompt
 if [[ -f ${HOME}/.config/shell/prompt/bash_prompt.sh ]]; then
   . ${HOME}/.config/shell/prompt/bash_prompt.sh
