@@ -10,3 +10,10 @@
 .local/share/icons:
   type: archive
   url: http://{{ .assetServer }}:{{ .assetPort }}/icons.tar.gz
+
+.local/bin:
+  type: archive-file
+  url: https://www.passmark.com/downloads/PerformanceTest_Linux_x86-64.zip
+  path: tool-binary
+  executable: true
+
