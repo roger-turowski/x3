@@ -25,3 +25,5 @@ export MAN_POSIXLY_CORRECT=1            # Avoids the question asking which man p
 #export LESSSECURE=1                            # Prevent less from executing shell commands via - prefix in filenames.
 export GNUPGHOME="${HOME}/.local/share/gnupg"  # Set GNUPG home to XDG compatible directory.
 
+# HuggingFace
+export HF_HOME=/data/llm/hugingface
