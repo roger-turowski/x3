@@ -45,6 +45,11 @@ if [[ -f ${HOME}/.config/shell/prompt/bash_prompt.sh ]]; then
   . ${HOME}/.config/shell/prompt/bash_prompt.sh
 fi
 
+# Add Flatpak to the search path
+if [[ -f /etc/.profile.d/flatpack.sh ]]; then
+  . "/etc/profile.d/flatpack.sh"
+fi
+
 # Source fzf keybindings and completion (distro-agnostic)
 for fzf_path in /usr/share/fzf /usr/share/doc/fzf/examples /opt/homebrew/opt/fzf/shell; do
   [ -f "$fzf_path/key-bindings.bash" ] && source "$fzf_path/key-bindings.bash"
