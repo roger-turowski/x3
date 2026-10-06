@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# VERSION: v1.0.1
+
+echo "📦 Streaming large font archive..."
+
+FONTS_FILE="fonts.tar.gz"
+TARGET_DIR="$HOME/.local/share/fonts"
+LEGACY_DIR="$HOME/.fonts"
+
+# Ensure the fonts directory exists
+mkdir -p "$TARGET_DIR"
+
+# Universal fallback link for older window managers/DEs
+if [ ! -d "$LEGACY_DIR" ] && [ ! -L "$LEGACY_DIR" ]; then
+    ln -s "$TARGET_DIR" "$LEGACY_DIR"
+fi
+
+# Download the tarball directly to your temp folder
+curl -sSL "http://{{ .assetServer }}:{{ .assetPort }}/$FONTS_FILE" -o "/tmp/$FONTS_FILE"
+
+# Extract the archive cleanly over the target folder
+# -x: extract, -z: gzip, -f: file, -C: change destination directory
+tar -xzf "/tmp/$FONTS_FILE" -C "$TARGET_DIR"
+
+# Clean up temp file
+rm "/tmp/$FONTS_FILE"
+
+# Refresh system font cache (Linux)
+if command -v fc-cache &> /dev/null; then
+    fc-cache -f
+fi
+
+echo "✅ Fonts updated successfully!"
