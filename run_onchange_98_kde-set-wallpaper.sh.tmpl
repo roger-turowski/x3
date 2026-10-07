@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+pgrep -x plasmashell >/dev/null 2>&1 || exit 0
+
 WALLPAPER="${HOME}/Pictures/Wallpapers/Waterfall Rocks 4k Wallpaper HD Nature Image.jpg"
 WALLPAPER_URI="file://${WALLPAPER// /%20}"
 
