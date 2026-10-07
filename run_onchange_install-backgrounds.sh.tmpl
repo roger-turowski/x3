@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# VERSION: v1.0.2
+
+echo "📦 Streaming large background archive..."
+
+BACKGROUNDS_FILE="backgrounds.tar.gz"
+TARGET_DIR="$HOME/.local/share/backgrounds"
+LEGACY_DIR="$HOME/Pictures/Wallpapers"
+
+# Ensure the fonts directory exists
+mkdir -p "$TARGET_DIR"
+
+# Convenient friendly fallback link
+if [ ! -d "$LEGACY_DIR" ] && [ ! -L "$LEGACY_DIR" ]; then
+    ln -s "$TARGET_DIR" "$LEGACY_DIR"
+fi
+
+# Download the tarball directly to your temp folder
+curl -sSL "http://{{ .assetServer }}:{{ .assetPort }}/$BACKGROUNDS_FILE" -o "/tmp/$BACKGROUNDS_FILE"
+
+# Extract the archive cleanly over the target folder
+# -x: extract, -z: gzip, -f: file, -C: change destination directory
+tar -xzf "/tmp/$BACKGROUNDS_FILE" -C "$TARGET_DIR"
+
+# Clean up temp file
+rm "/tmp/$BACKGROUNDS_FILE"
+
+echo "✅Backgrounds updated successfully!"
