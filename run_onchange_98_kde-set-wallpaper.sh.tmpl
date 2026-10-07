@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+WALLPAPER="${HOME}/Pictures/Wallpapers/Waterfall Rocks 4k Wallpaper HD Nature Image.jpg"
+WALLPAPER_URI="file://${WALLPAPER// /%20}"
+
+for i in {1..30}; do
+  if qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript 'print(desktops().length)' 2>/dev/null | grep -q '[1-9]'; then
+    break
+  fi
+  sleep 1
+done
+
+qdbus6 org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+var allDesktops = desktops();
+for (i = 0; i < allDesktops.length; i++) {
+  d = allDesktops[i];
+  d.wallpaperPlugin = 'org.kde.image';
+  d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');
+  d.writeConfig('Image', '${WALLPAPER_URI}');
+  d.reloadConfig();
+}
+"
