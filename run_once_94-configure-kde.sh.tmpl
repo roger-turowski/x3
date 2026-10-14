@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONFIG="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
+BACKUP="$CONFIG.bak"
+
+log() { printf '[94-configure-kde] %s\n' "$*" >&2; }
+
+# Silence the BASH_FUNC_mc%% KIO warning if mc leaked functions into env
+unset BASH_FUNC_mc%% 2>/dev/null || true
+
+source /etc/os-release
+
+# Distro icon map — extend as you test on other distros
+declare -A DISTRO_ICONS=(
+  [opensuse-tumbleweed]="/usr/share/icons/hicolor/scalable/apps/openSUSE-distributor-logo.svg"
+  [arch]="/usr/share/pixmaps/archlinux-logo.svg"
+  #[debian]=""
+  #[fedora]=""
+)
+
+ICON="${DISTRO_ICONS[$ID]:-}"
+
+# Unknown distro or missing icon file: leave the default alone, exit cleanly
+# so chezmoi apply doesn't report a failure
+if [[ -z "$ICON" ]]; then
+  log "No icon mapping for ID='$ID' — leaving default Kickoff icon in place."
+  exit 0
+fi
+if [[ ! -f "$ICON" ]]; then
+  log "Mapped icon '$ICON' not found on disk — leaving default in place."
+  exit 0
+fi
+if [[ ! -f "$CONFIG" ]]; then
+  log "No Plasma appletsrc present — skipping (Plasma not yet configured?)."
+  exit 0
+fi
+
+# Idempotency check: skip if the icon is already set
+if grep -q "^icon=$ICON$" "$CONFIG"; then
+  log "Kickoff icon already set to '$ICON'. Nothing to do."
+  exit 0
+fi
+
+cp "$CONFIG" "$BACKUP"
+
+restore() {
+  log "ERROR encountered — restoring backup and restarting plasmashell."
+  mv -f "$BACKUP" "$CONFIG"
+  systemctl --user restart plasma-plasmashell.service 2>/dev/null || true
+  exit 1
+}
+trap restore ERR
+
+# Locate the Kickoff applet section, e.g. [Containments][3][Applets][12]
+SECTION=$(awk -F= '
+  /^\[/ { sec=$0; next }
+  $1 == "plugin" && $2 == "org.kde.plasma.kickoff" { print sec; exit }
+' "$CONFIG")
+
+if [[ -z "$SECTION" ]]; then
+  log "Kickoff applet not found in config — aborting."
+  exit 1
+fi
+
+CONTAINMENT_ID=$(printf '%s' "$SECTION" | sed 's/^\[Containments\]\[\([0-9]*\)\].*/\1/')
+APPLET_ID=$(printf '%s' "$SECTION" | sed 's/.*\[Applets\]\[\([0-9]*\)\].*/\1/')
+
+# Prefer Plasma 6 tooling, fall back to Plasma 5
+KW=$(command -v kwriteconfig6 || command -v kwriteconfig5 || true)
+[[ -n "$KW" ]] || { log "No kwriteconfig found — is this a KDE machine?"; exit 0; }
+
+# Stop plasmashell first to avoid the config-write race
+systemctl --user stop plasma-plasmashell.service 2>/dev/null \
+  || kquitapp6 plasmashell 2>/dev/null \
+  || kquitapp5 plasmashell 2>/dev/null \
+  || true
+sleep 1
+
+"$KW" --file "plasma-org.kde.plasma.desktop-appletsrc" \
+  --group Containments --group "$CONTAINMENT_ID" \
+  --group Applets --group "$APPLET_ID" --group General \
+  --key icon "$ICON"
+
+# Remove the ERR trap before restart, so a flaky restart doesn't trigger revert
+trap - ERR
+
+systemctl --user restart plasma-plasmashell.service 2>/dev/null \
+  || kstart plasmashell 2>/dev/null \
+  || kstart5 plasmashell 2>/dev/null \
+  || { log "Config written, but failed to restart plasmashell — it will apply at next login."; exit 0; }
+
+log "Kickoff icon set to '$ICON'. Backup retained at '$BACKUP'."
