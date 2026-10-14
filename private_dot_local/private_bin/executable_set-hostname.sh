@@ -91,7 +91,7 @@ validate_hostname() {
 
     # Regex for valid hostname: alphanumeric, hyphens, dots. 
     # Must start/end with alphanumeric. No spaces or special chars.
-    if [[ ! "$hostname" =~ ^[a-zA-Z0-9]([a-zA-Z0-9.]*[a-zA-Z0-9])?$ ]]; then
+    if [[ ! "$hostname" =~ ^[a-zA-Z0-9]([a-zA-Z0-9.\-]*[a-zA-Z0-9])?$ ]]; then
         die "Invalid hostname format. Only alphanumeric characters, hyphens (-), and dots (.) are allowed. Cannot start or end with a hyphen or dot."
     fi
 
