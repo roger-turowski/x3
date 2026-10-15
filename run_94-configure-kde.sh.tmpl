@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+# ~/.local/share/chezmoi/run_94-configure-kde.sh.tmpl
+#
+# Sets the Kickoff (Application Launcher) icon to a distro-specific logo.
+# Convergent and idempotent: safe to run on every `chezmoi apply`.
+#
+# PLASMA 6 CONFIG LAYOUT (verified on 6.8):
+#   Live key:   [Containments][N][Applets][M][Configuration][General]  icon=<path>
+#   Inert key:  [Containments][N][Applets][M][General]                 icon=<path>
+#   Writing the inert path yields a valid-looking line Plasma never reads.
+#   This script writes only the live path and cleans up the inert one.
+
+set -euo pipefail
+
+CONFIG_NAME="plasma-org.kde.plasma.desktop-appletsrc"
+CONFIG="$HOME/.config/$CONFIG_NAME"
+
+log() { printf '[94-configure-kde] %s\n' "$*" >&2; }
+
+# ---------------------------------------------------------------------------
+# Distro -> icon map. Extend as you validate on other distros.
+# ---------------------------------------------------------------------------
+declare -A DISTRO_ICONS=(
+  [opensuse-tumbleweed]="/usr/share/icons/hicolor/scalable/apps/openSUSE-distributor-logo.svg"
+  [arch]="/usr/share/pixmaps/archlinux-logo.svg"
+  # [debian]=""
+  # [fedora]=""
+)
+
+source /etc/os-release
+ICON="${DISTRO_ICONS[$ID]:-}"
+
+# ---------------------------------------------------------------------------
+# Non-failure bail-outs: exit 0 so `chezmoi apply` never breaks on these.
+# ---------------------------------------------------------------------------
+if [[ -z "$ICON" ]]; then
+  log "No icon mapping for ID='$ID' — leaving the default Kickoff icon in place."
+  exit 0
+fi
+if [[ ! -f "$ICON" ]]; then
+  log "Mapped icon '$ICON' is not on disk — leaving the default in place."
+  exit 0
+fi
+if [[ ! -f "$CONFIG" ]]; then
+  log "No $CONFIG_NAME yet (Plasma has not started for this user) — skipping."
+  exit 0
+fi
+
+KW=$(command -v kwriteconfig6 || command -v kwriteconfig5 || true)
+KR=$(command -v kreadconfig6  || command -v kreadconfig5  || true)
+if [[ -z "$KW" || -z "$KR" ]]; then
+  log "kwriteconfig/kreadconfig not found — not a KDE machine? Skipping."
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# plasmashell control
+# ---------------------------------------------------------------------------
+PLASMA_STOPPED=false
+
+quit_plasmashell() {
+  if command -v kquitapp6 >/dev/null 2>&1; then
+    kquitapp6 plasmashell 2>/dev/null || true
+  elif command -v kquitapp5 >/dev/null 2>&1; then
+    kquitapp5 plasmashell 2>/dev/null || true
+  else
+    return 1
+  fi
+  sleep 1
+  return 0
+}
+
+start_plasmashell() {
+  if systemctl --user start plasma-plasmashell.service 2>/dev/null; then
+    return 0
+  fi
+  if command -v kstart >/dev/null 2>&1; then
+    if kstart plasmashell 2>/dev/null; then
+      return 0
+    fi
+  fi
+  return 1
+}
+
+# Safety net: never leave you without a desktop.
+restore_desktop() {
+  if [[ "$PLASMA_STOPPED" == true ]]; then
+    log "Exiting with plasmashell stopped — attempting to restart it."
+    start_plasmashell || log "Manual recovery: 'plasmashell --replace &' or reboot."
+  fi
+}
+trap restore_desktop EXIT
+
+# ---------------------------------------------------------------------------
+# Locate every Kickoff applet section, e.g. [Containments][2][Applets][3]
+# ---------------------------------------------------------------------------
+mapfile -t SECTIONS < <(awk -F= '
+  /^\[/ { sec = $0; next }
+  $1 == "plugin" && $2 == "org.kde.plasma.kickoff" { print sec }
+' "$CONFIG")
+
+if (( ${#SECTIONS[@]} == 0 )); then
+  log "No Kickoff applet in $CONFIG_NAME — nothing to do."
+  exit 0
+fi
+if (( ${#SECTIONS[@]} > 1 )); then
+  log "WARNING: ${#SECTIONS[@]} Kickoff applets found; processing all of them."
+fi
+
+# ---------------------------------------------------------------------------
+# Decide what actually needs changing.
+#
+# IDEMPOTENCY: read the key back with kreadconfig using the SAME --group path
+# used to write it. It cannot drift from the write path the way a whole-file
+# grep can, and it never matches an inert duplicate in another group.
+# ---------------------------------------------------------------------------
+NEEDS_UPDATE=()
+LEGACY_CLEANUP=()
+
+for SECTION in "${SECTIONS[@]}"; do
+  CID=$(sed -n 's/^\[Containments\]\[\([0-9]*\)\].*/\1/p' <<<"$SECTION")
+  AID=$(sed -n 's/.*\[Applets\]\[\([0-9]*\)\].*/\1/p' <<<"$SECTION")
+
+  if [[ -z "$CID" || -z "$AID" ]]; then
+    log "Could not parse containment/applet IDs from '$SECTION' — skipping."
+    continue
+  fi
+
+  CURRENT=$("$KR" --file "$CONFIG_NAME" \
+    --group Containments --group "$CID" \
+    --group Applets --group "$AID" \
+    --group Configuration --group General \
+    --key icon 2>/dev/null || true)
+
+  LEGACY=$("$KR" --file "$CONFIG_NAME" \
+    --group Containments --group "$CID" \
+    --group Applets --group "$AID" \
+    --group General \
+    --key icon 2>/dev/null || true)
+
+  if [[ "$CURRENT" == "$ICON" ]]; then
+    log "Containment $CID / applet $AID already set to '$ICON'."
+  else
+    log "Containment $CID / applet $AID: '${CURRENT:-<unset>}' -> '$ICON'"
+    NEEDS_UPDATE+=("$CID:$AID")
+  fi
+
+  if [[ -n "$LEGACY" ]]; then
+    log "Inert legacy key present (containment $CID / applet $AID): icon=$LEGACY"
+    LEGACY_CLEANUP+=("$CID:$AID")
+  fi
+done
+
+if (( ${#NEEDS_UPDATE[@]} == 0 && ${#LEGACY_CLEANUP[@]} == 0 )); then
+  log "Nothing to do."
+  exit 0
+fi
+
+# ---------------------------------------------------------------------------
+# Apply. Stop plasmashell first so it cannot serialise its config over ours.
+# ---------------------------------------------------------------------------
+if (( ${#NEEDS_UPDATE[@]} > 0 )); then
+  if [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
+    log "Quitting plasmashell to avoid a config-write race..."
+    if quit_plasmashell; then
+      PLASMA_STOPPED=true
+    else
+      log "Could not quit plasmashell cleanly — writing config anyway."
+    fi
+  else
+    log "No graphical session detected — writing config only; applies at next login."
+  fi
+fi
+
+for entry in "${NEEDS_UPDATE[@]}"; do
+  CID="${entry%%:*}"; AID="${entry##*:}"
+  "$KW" --file "$CONFIG_NAME" \
+    --group Containments --group "$CID" \
+    --group Applets --group "$AID" \
+    --group Configuration --group General \
+    --key icon "$ICON"
+  log "Wrote live icon key for containment $CID / applet $AID."
+done
+
+for entry in "${LEGACY_CLEANUP[@]}"; do
+  CID="${entry%%:*}"; AID="${entry##*:}"
+  "$KW" --file "$CONFIG_NAME" \
+    --group Containments --group "$CID" \
+    --group Applets --group "$AID" \
+    --group General \
+    --delete --key icon
+  log "Deleted inert legacy key for containment $CID / applet $AID."
+done
+
+if [[ "$PLASMA_STOPPED" == true ]]; then
+  if start_plasmashell; then
+    PLASMA_STOPPED=false
+    log "plasmashell restarted. Kickoff icon is now '$ICON'."
+  else
+    log "Config written, but plasmashell did NOT restart."
+    log "It is persisted and will apply at next login. To recover now:"
+    log "  Ctrl+Alt+F3, log in, then:  plasmashell --replace &"
+  fi
+else
+  log "Config updated. Icon will apply at next login."
+fi
