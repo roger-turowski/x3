@@ -1,3 +1,4 @@
+{{ if false }}
 # .chezmoiremove
 #
 # Use this file to remove old files no longer managed.
@@ -11,3 +12,4 @@
 # {{ if not .work }}
 # .ssh/work_*
 # {{ end }}
+{{ end }}
