@@ -3,12 +3,7 @@
 #
 # Sets the Kickoff (Application Launcher) icon to a distro-specific logo.
 # Convergent and idempotent: safe to run on every `chezmoi apply`.
-#
-# PLASMA 6 CONFIG LAYOUT (verified on 6.8):
-#   Live key:   [Containments][N][Applets][M][Configuration][General]  icon=<path>
-#   Inert key:  [Containments][N][Applets][M][General]                 icon=<path>
-#   Writing the inert path yields a valid-looking line Plasma never reads.
-#   This script writes only the live path and cleans up the inert one.
+# Always attempts to restart plasmashell when modifications occur.
 
 set -euo pipefail
 
@@ -54,7 +49,7 @@ if [[ -z "$KW" || -z "$KR" ]]; then
 fi
 
 # ---------------------------------------------------------------------------
-# plasmashell control
+# plasmashell control — ALWAYS attempt restart after writes
 # ---------------------------------------------------------------------------
 PLASMA_STOPPED=false
 
@@ -71,13 +66,25 @@ quit_plasmashell() {
 }
 
 start_plasmashell() {
+  # Try systemd user service first
   if systemctl --user start plasma-plasmashell.service 2>/dev/null; then
     return 0
   fi
-  if command -v kstart >/dev/null 2>&1; then
-    if kstart plasmashell 2>/dev/null; then
-      return 0
-    fi
+  # Fall back to kstart variants
+  if command -v kstart6 >/dev/null 2>&1 && kstart6 plasmashell 2>/dev/null; then
+    return 0
+  fi
+  if command -v kstart >/dev/null 2>&1 && kstart plasmashell 2>/dev/null; then
+    return 0
+  fi
+  if command -v kstart5 >/dev/null 2>&1 && kstart5 plasmashell 2>/dev/null; then
+    return 0
+  fi
+  # Nuclear option — plasmashell --replace works from any graphical terminal
+  if pgrep -x plasmashell >/dev/null 2>&1; then
+    pkill -x plasmashell && sleep 1 && plasmashell &
+    disown
+    return $?
   fi
   return 1
 }
@@ -86,7 +93,12 @@ start_plasmashell() {
 restore_desktop() {
   if [[ "$PLASMA_STOPPED" == true ]]; then
     log "Exiting with plasmashell stopped — attempting to restart it."
-    start_plasmashell || log "Manual recovery: 'plasmashell --replace &' or reboot."
+    if start_plasmashell; then
+      log "plasmashell restarted successfully."
+    else
+      log "FAILED TO RESTORE plasmashell. Manual recovery:"
+      log "  Ctrl+Alt+F3, log in, then:  plasmashell --replace &"
+    fi
   fi
 }
 trap restore_desktop EXIT
@@ -109,10 +121,6 @@ fi
 
 # ---------------------------------------------------------------------------
 # Decide what actually needs changing.
-#
-# IDEMPOTENCY: read the key back with kreadconfig using the SAME --group path
-# used to write it. It cannot drift from the write path the way a whole-file
-# grep can, and it never matches an inert duplicate in another group.
 # ---------------------------------------------------------------------------
 NEEDS_UPDATE=()
 LEGACY_CLEANUP=()
@@ -157,18 +165,15 @@ if (( ${#NEEDS_UPDATE[@]} == 0 && ${#LEGACY_CLEANUP[@]} == 0 )); then
 fi
 
 # ---------------------------------------------------------------------------
-# Apply. Stop plasmashell first so it cannot serialise its config over ours.
+# Apply — ALWAYS quit plasmashell before writing to avoid race conditions
 # ---------------------------------------------------------------------------
-if (( ${#NEEDS_UPDATE[@]} > 0 )); then
-  if [[ -n "${WAYLAND_DISPLAY:-}${DISPLAY:-}" ]]; then
-    log "Quitting plasmashell to avoid a config-write race..."
-    if quit_plasmashell; then
-      PLASMA_STOPPED=true
-    else
-      log "Could not quit plasmashell cleanly — writing config anyway."
-    fi
+if (( ${#NEEDS_UPDATE[@]} > 0 || ${#LEGACY_CLEANUP[@]} > 0 )); then
+  log "Quitting plasmashell to avoid a config-write race..."
+  if quit_plasmashell; then
+    PLASMA_STOPPED=true
+    log "plasmashell stopped."
   else
-    log "No graphical session detected — writing config only; applies at next login."
+    log "Could not stop plasmashell cleanly — writing config anyway."
   fi
 fi
 
@@ -192,15 +197,23 @@ for entry in "${LEGACY_CLEANUP[@]}"; do
   log "Deleted inert legacy key for containment $CID / applet $AID."
 done
 
+# ---------------------------------------------------------------------------
+# ALWAYS restart plasmashell after writes (unless we couldn't stop it)
+# ---------------------------------------------------------------------------
 if [[ "$PLASMA_STOPPED" == true ]]; then
   if start_plasmashell; then
     PLASMA_STOPPED=false
-    log "plasmashell restarted. Kickoff icon is now '$ICON'."
+    log "SUCCESS: plasmashell restarted. Kickoff icon is now '$ICON'."
   else
-    log "Config written, but plasmashell did NOT restart."
-    log "It is persisted and will apply at next login. To recover now:"
-    log "  Ctrl+Alt+F3, log in, then:  plasmashell --replace &"
+    log "CRITICAL: Config written, but plasmashell did NOT restart."
+    log "This usually means the session is detached (e.g., SSH, TTY, cron)."
+    log "To recover now, run: plasmashell --replace &"
   fi
 else
-  log "Config updated. Icon will apply at next login."
+  log "Config updated. Restarting plasmashell for changes to take effect..."
+  if start_plasmashell; then
+    log "plasmashell restarted. Kickoff icon is now '$ICON'."
+  else
+    log "Config written. Icon will apply at next login (couldn't restart plasmashell)."
+  fi
 fi
