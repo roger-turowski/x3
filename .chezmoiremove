@@ -1,5 +1,13 @@
 # .chezmoiremove
 #
-# # Use this file to remove old files no longer managed.
+# Use this file to remove old files no longer managed.
 #
+# Example:
+# # Remove old config files
+# .oldconfig
+# .legacy/**
 #
+# Remove work files on personal machine
+# {{ if not .work }}
+# .ssh/work_*
+# {{ end }}
